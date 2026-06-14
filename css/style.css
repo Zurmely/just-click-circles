@@ -5,10 +5,16 @@
 :root {
   --accent: #facc15;
   --accent-dark: #ca9a04;
+  --accent-text: #1c1d22;
   --panel: #1c1d22;
   --panel-soft: #26272e;
+  --panel-border: rgba(250,204,21,.18);
   --text: #f5f5f4;
   --text-dim: #a8a8a3;
+  --font-primary: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --panel-radius: 20px;
+  --btn-radius: 14px;
+  --panel-shadow: 0 20px 60px rgba(0,0,0,.45);
 }
 
 * {
@@ -22,7 +28,7 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-primary);
   background: #fff;
   touch-action: none;
   overscroll-behavior: none;
@@ -126,15 +132,16 @@ html, body {
 .panel {
   background: var(--panel);
   color: var(--text);
-  border-radius: 20px;
+  border-radius: var(--panel-radius, 20px);
   padding: 28px 34px;
   min-width: 280px;
   max-width: 92vw;
   max-height: 88vh;
   overflow-y: auto;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,.45);
-  border: 1px solid rgba(250,204,21,.18);
+  box-shadow: var(--panel-shadow, 0 20px 60px rgba(0,0,0,.45));
+  border: 1px solid var(--panel-border, rgba(250,204,21,.18));
+  transition: border-radius .2s ease, box-shadow .2s ease;
 }
 
 .game-title {
@@ -199,7 +206,7 @@ html, body {
   min-height: 48px; /* meet 48px touch-target guideline */
   margin: 10px 0;
   border: none;
-  border-radius: 14px;
+  border-radius: var(--btn-radius, 14px);
   font-size: 16px;
   font-weight: 700;
   letter-spacing: .5px;
@@ -208,7 +215,7 @@ html, body {
   font-family: inherit;
 }
 .btn:active { transform: scale(.96); }
-.btn-primary { background: var(--accent); color: #1c1d22; }
+.btn-primary { background: var(--accent); color: var(--accent-text, #1c1d22); }
 .btn-secondary { background: var(--panel-soft); color: var(--text); border: 1px solid rgba(255,255,255,.1); }
 .btn-ghost { background: transparent; color: var(--text-dim); font-weight: 600; }
 .btn small { display: block; font-weight: 500; font-size: 12px; opacity: .75; margin-top: 2px; }
@@ -239,7 +246,7 @@ html, body {
   min-height: 48px;
   background: var(--panel-soft);
   border: 1px solid rgba(255,255,255,.15);
-  border-radius: 10px;
+  border-radius: var(--btn-radius, 10px);
   color: var(--text);
   font-size: 13px;
   font-weight: 600;
@@ -253,6 +260,61 @@ html, body {
 #bg-status { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
 #remove-bg-btn { display: none; margin-top: 8px; }
 #remove-bg-btn.visible { display: inline-flex; }
+
+/* ---------- Theme selector ---------- */
+.setting-row-themes {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.theme-selector {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  width: 100%;
+  padding: 4px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.15) transparent;
+}
+.theme-selector::-webkit-scrollbar { height: 4px; }
+.theme-selector::-webkit-scrollbar-track { background: transparent; }
+.theme-selector::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 2px; }
+.theme-preset-btn {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  min-width: 72px;
+  min-height: 48px;
+  background: var(--panel-soft);
+  border: 2px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform .08s ease, border-color .15s ease, background .15s ease;
+}
+.theme-preset-btn:active { transform: scale(.95); }
+.theme-preset-btn.active {
+  border-color: var(--accent);
+  background: rgba(255,255,255,.06);
+  box-shadow: 0 0 12px rgba(250,204,21,.12);
+}
+.theme-swatches {
+  display: flex;
+  gap: 3px;
+}
+.theme-swatches .sw {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: block;
+}
 
 /* ---------- Game over ---------- */
 #gameover-quote {
@@ -351,11 +413,7 @@ body.dark #copyright {
   color: rgba(245,245,244,.6);
   text-shadow: 0 0 5px rgba(0,0,0,.8), 0 0 2px rgba(0,0,0,.8);
 }
-.theme-btn.active {
-  background: var(--accent);
-  color: #1c1d22;
-  border-color: var(--accent);
-}
+
 
 /* ---------- Ad banner ---------- */
 #ad-banner {
@@ -421,3 +479,121 @@ body.ads-visible #ad-banner { display: flex; }
 /* keep menu panels clear of the banner */
 body.ads-visible .overlay { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
 body.ads-visible .panel { max-height: calc(100vh - 92px); }
+
+/* ===================================================
+   Theme-specific structural overrides
+   =================================================== */
+
+/* ---------- Claude ---------- */
+body[data-theme="claude"] .panel {
+  box-shadow: var(--panel-shadow),
+              inset 0 1px 0 rgba(218,123,74,.08);
+}
+body[data-theme="claude"] .game-title {
+  letter-spacing: 3px;
+}
+body[data-theme="claude"] .splash {
+  font-style: italic;
+}
+body[data-theme="claude"] #gameover-quote {
+  color: #da7b4a;
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* ---------- Mario 64 ---------- */
+body[data-theme="mario64"] .panel {
+  border-width: 3px;
+  border-style: solid;
+}
+body[data-theme="mario64"] .btn-primary {
+  border-bottom: 3px solid var(--accent-dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+body[data-theme="mario64"] .btn-primary:active {
+  border-bottom-width: 1px;
+  transform: translateY(2px) scale(.97);
+}
+body[data-theme="mario64"] .game-title {
+  text-transform: uppercase;
+}
+body[data-theme="mario64"] .splash {
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 13px !important;
+}
+body[data-theme="mario64"] #gameover-quote {
+  color: #ffd700;
+}
+body[data-theme="mario64"] #pause-btn {
+  border-radius: 8px;
+}
+
+/* ---------- WoW ---------- */
+body[data-theme="wow"] .panel {
+  box-shadow: var(--panel-shadow),
+              inset 0 0 40px rgba(163,53,238,.06);
+  border-width: 2px;
+}
+body[data-theme="wow"] .panel h2 {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 20px;
+}
+body[data-theme="wow"] .game-title {
+  letter-spacing: 4px;
+  font-size: clamp(22px, 5.5vw, 34px);
+}
+body[data-theme="wow"] .btn-primary {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 14px;
+}
+body[data-theme="wow"] .splash {
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+body[data-theme="wow"] #gameover-quote {
+  color: #a335ee;
+  letter-spacing: .5px;
+}
+body[data-theme="wow"] #final-score {
+  text-shadow: 0 0 20px rgba(163,53,238,.35);
+}
+
+/* ---------- CS:GO ---------- */
+body[data-theme="csgo"] .panel {
+  border-top: 2px solid var(--accent);
+}
+body[data-theme="csgo"] .panel h2 {
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 700;
+  font-size: 18px;
+}
+body[data-theme="csgo"] .game-title {
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 700;
+}
+body[data-theme="csgo"] .btn {
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 14px;
+}
+body[data-theme="csgo"] .splash {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+body[data-theme="csgo"] #gameover-quote {
+  color: #cf6a32;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-style: normal;
+  font-weight: 700;
+}
+body[data-theme="csgo"] #pause-btn {
+  border-radius: 4px;
+}

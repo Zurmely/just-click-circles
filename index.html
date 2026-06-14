@@ -77,11 +77,29 @@
   <div class="panel">
     <h2>Settings</h2>
     <button class="btn" id="remove-ads-btn">Remove ads &mdash; $0.99</button>
-    <div class="setting-row">
+    <div class="setting-row setting-row-themes">
       <label>Theme</label>
-      <div>
-        <button class="file-btn theme-btn active" id="theme-light-btn">Light</button>
-        <button class="file-btn theme-btn" id="theme-dark-btn">Dark</button>
+      <div class="theme-selector" id="theme-selector">
+        <button class="theme-preset-btn active" id="theme-default" data-theme="default">
+          <span class="theme-swatches"><span class="sw" style="background:#facc15"></span><span class="sw" style="background:#9ca3af"></span><span class="sw" style="background:#ffffff;border:1px solid rgba(0,0,0,.15)"></span></span>
+          <span class="theme-name">Default</span>
+        </button>
+        <button class="theme-preset-btn" id="theme-claude" data-theme="claude">
+          <span class="theme-swatches"><span class="sw" style="background:#da7b4a"></span><span class="sw" style="background:#d4a574"></span><span class="sw" style="background:#faf5ee"></span></span>
+          <span class="theme-name">Claude</span>
+        </button>
+        <button class="theme-preset-btn" id="theme-mario64" data-theme="mario64">
+          <span class="theme-swatches"><span class="sw" style="background:#ffd700"></span><span class="sw" style="background:#e03030"></span><span class="sw" style="background:#4a90d9"></span></span>
+          <span class="theme-name">Mario 64</span>
+        </button>
+        <button class="theme-preset-btn" id="theme-wow" data-theme="wow">
+          <span class="theme-swatches"><span class="sw" style="background:#a335ee"></span><span class="sw" style="background:#1eff00"></span><span class="sw" style="background:#0d1117"></span></span>
+          <span class="theme-name">WoW</span>
+        </button>
+        <button class="theme-preset-btn" id="theme-csgo" data-theme="csgo">
+          <span class="theme-swatches"><span class="sw" style="background:#cf6a32"></span><span class="sw" style="background:#5a5a5e"></span><span class="sw" style="background:#2a2520"></span></span>
+          <span class="theme-name">CS:GO</span>
+        </button>
       </div>
     </div>
     <div class="setting-row">
@@ -89,7 +107,7 @@
       <div style="text-align:right">
         <button class="file-btn" id="upload-bg-btn">Upload image</button>
         <input type="file" id="bg-input" accept="image/*" hidden>
-        <div id="bg-status">Default: white</div>
+        <div id="bg-status">Default</div>
         <button class="file-btn" id="remove-bg-btn">Remove image</button>
       </div>
     </div>
@@ -101,7 +119,7 @@
       <label>Outline color</label>
       <input type="color" id="outline-color" value="#facc15">
     </div>
-    <button class="btn btn-secondary" id="reset-colors-btn" style="margin-top:18px">Reset colors</button>
+    <button class="btn btn-secondary" id="reset-colors-btn" style="margin-top:18px">Reset to theme</button>
     <button class="btn btn-ghost" id="settings-back-btn">Back</button>
   </div>
 </div>

@@ -6,6 +6,7 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+.gitignore
 
 # IDEs and editors
 .idea/
@@ -14,6 +15,7 @@ Thumbs.db
 .settings/
 *.sublime-workspace
 .vscode/*
+.vscode/
 !.vscode/settings.json
 
 # Node/dependency directories (for future use)

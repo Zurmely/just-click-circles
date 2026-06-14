@@ -21,6 +21,8 @@ export const settings = {
   fillColor: "#9ca3af",
   outlineColor: "#facc15",
   theme: "light",
+  activeTheme: "default",  // theme preset key (see themes.js)
+  canvasBg: "#ffffff",     // canvas background color (set by theme)
 };
 
 export const highScores = {
@@ -83,6 +85,8 @@ export function loadSettings() {
       if (saved.fillColor) settings.fillColor = saved.fillColor;
       if (saved.outlineColor) settings.outlineColor = saved.outlineColor;
       if (saved.theme) settings.theme = saved.theme;
+      if (saved.activeTheme) settings.activeTheme = saved.activeTheme;
+      if (saved.canvasBg) settings.canvasBg = saved.canvasBg;
     }
   } catch (e) { /* localStorage unavailable or corrupt — use defaults */ }
 }
@@ -93,6 +97,8 @@ export function saveSettings() {
       fillColor: settings.fillColor,
       outlineColor: settings.outlineColor,
       theme: settings.theme,
+      activeTheme: settings.activeTheme,
+      canvasBg: settings.canvasBg,
     }));
   } catch (e) { /* silently fail */ }
 }

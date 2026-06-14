@@ -6,6 +6,7 @@ import {
   game, settings, highScores, IS_MOBILE,
   livesEnabled, maxLives, isMayhem, scoreKey, isBlitz,
 } from "./state.js";
+import { THEMES } from "./themes.js";
 
 // ---------- DOM cache ----------
 const $ = (id) => document.getElementById(id);
@@ -26,66 +27,23 @@ export const overlays = {
   results:     $("menu-results"),
 };
 
-// ---------- Splash texts ----------
-const SPLASHES = [
-  "Just Click It",
-  "The Best a Man Can Click",
-  "There are some things money can't click",
-  "Click Different",
-  "Betcha can't click just one",
-  "America Runs on Clickin",
-  "I'm Clickin' It",
-  "Click Outside the Box",
-  "Click Big",
-  "Click the rainbow",
-  "The Quicker Clicker Upper",
-  "Click Time. Click Money",
-  "Click it your way",
-  "All for clicks. Clicks for all",
-  "Clicks never go out of style",
-  "Live in your world. Click in ours",
-  "Click Fresh",
-  "Click Anywhere",
-  "I want my Clicks!",
-  "Click happiness",
-  "The Click that smiles back",
-  "Pure Click",
-  "Clicks are forever",
-  "Its finger-clickin good",
-  "Gotta click'em all!",
-  "The Ultimate Clicking Machine",
-  "It keeps clicking, and clicking, and clicking",
-  "Click further",
-];
-
-// ---------- Game-over quotes ----------
-const GAMEOVER_QUOTES = [
-  "All you had to do was click the damn circle CJ!",
-  "You miss 100% of the circles you don't click.",
-  "Game over, man. Game over!",
-  "The circle was right there!",
-  "I used to be a clicker like you, then I took a miss to the knee.",
-  "That wasn't very cash money of you.",
-  "Task failed successfully.",
-  "Your clicks have been reported to the authorities.",
-  "Certified circle fumble.",
-  "Skill issue detected.",
-  "Did you just... miss? On purpose?",
-  "Your finger called — it wants a refund.",
-  "Even the circles feel sorry for you.",
-  "Breaking news: circles dodge player for the first time.",
-];
+// ---------- Theme-aware text helpers ----------
+function getTheme() {
+  return THEMES[settings.activeTheme] || THEMES.default;
+}
 
 export function rollSplash() {
   const el = $("splash");
-  const text = SPLASHES[Math.floor(Math.random() * SPLASHES.length)];
+  const splashes = getTheme().splashes;
+  const text = splashes[Math.floor(Math.random() * splashes.length)];
   el.textContent = text;
   el.classList.toggle("rainbow", text === "Click the rainbow");
   el.style.fontSize = Math.max(9, Math.min(15, Math.round(364 / text.length))) + "px";
 }
 
 export function rollGameoverQuote() {
-  return GAMEOVER_QUOTES[Math.floor(Math.random() * GAMEOVER_QUOTES.length)];
+  const quotes = getTheme().gameoverQuotes;
+  return quotes[Math.floor(Math.random() * quotes.length)];
 }
 
 // ---------- Overlay management ----------
@@ -101,11 +59,12 @@ export function updateHUD() {
   scoreLabel.textContent = game.score;
   if (livesEnabled()) {
     const max = maxLives();
+    const icon = getTheme().lifeIcon || "\u2665";
     livesLabel.style.display = "";
     livesLabel.style.fontSize = max > 3 ? "13px" : "";
     livesLabel.style.letterSpacing = max > 3 ? "1px" : "";
-    livesLabel.innerHTML = "&#9829;".repeat(Math.max(0, game.lives)) +
-      "<span style='opacity:.25'>" + "&#9829;".repeat(Math.max(0, max - game.lives)) + "</span>";
+    livesLabel.innerHTML = icon.repeat(Math.max(0, game.lives)) +
+      "<span style='opacity:.25'>" + icon.repeat(Math.max(0, max - game.lives)) + "</span>";
   } else {
     livesLabel.style.display = "none";
   }

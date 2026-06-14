@@ -14,7 +14,7 @@ export function drawBackground(ctx, W, H) {
     const dw = img.width * scale, dh = img.height * scale;
     ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
   } else {
-    ctx.fillStyle = settings.theme === "dark" ? "#15161a" : "#ffffff";
+    ctx.fillStyle = settings.canvasBg;
     ctx.fillRect(0, 0, W, H);
   }
 }
