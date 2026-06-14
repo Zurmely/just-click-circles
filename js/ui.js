@@ -19,8 +19,6 @@ export const buffLabel = $("buff-label");
 export const overlays = {
   menu:        $("menu-main"),
   modes:       $("menu-modes"),
-  distraction: $("menu-distraction"),
-  difficulty:  $("menu-difficulty"),
   settings:    $("menu-settings"),
   pause:       $("menu-pause"),
   gameover:    $("menu-gameover"),
@@ -52,6 +50,11 @@ export function showOverlay(name) {
   if (name && overlays[name]) overlays[name].classList.add("visible");
   if (name === "menu") rollSplash();
   updateAdAndCopyright();
+  
+  const floatBtn = $("float-fullscreen-btn");
+  if (floatBtn) {
+    floatBtn.classList.toggle("hidden", !name);
+  }
 }
 
 // ---------- HUD ----------
@@ -120,31 +123,54 @@ export function blitzSummary(m) {
     " \u00B7 H " + highScores[m + "-hard"];
 }
 
+export function updateModesHighScores() {
+  const distraction = $("distraction-toggle").checked;
+  const prefix = distraction ? "2" : "1";
+  
+  $("hs-m-normal").textContent = "High score: " + highScores[prefix];
+  $("hs-m-zen").textContent = "High score: " + highScores[prefix + ".1"];
+  $("hs-m-blitz").textContent = blitzSummary(prefix + ".2");
+  $("hs-m-mayhem").textContent = "High score: " + highScores[prefix + ".3"];
+}
+
 export function showModesMenu() {
   game.state = "modes";
-  $("hs-m-1").textContent = "High score: " + highScores["1"];
-  $("hs-m-11").textContent = "High score: " + highScores["1.1"];
-  $("hs-m-12").textContent = blitzSummary("1.2");
-  $("hs-m-13").textContent = "High score: " + highScores["1.3"];
+  updateModesHighScores();
   showOverlay("modes");
 }
 
-export function openDistractionMenu() {
-  game.state = "distraction";
-  $("hs-dx-2").textContent = "High score: " + highScores["2"];
-  $("hs-dx-21").textContent = "High score: " + highScores["2.1"];
-  $("hs-dx-22").textContent = blitzSummary("2.2");
-  $("hs-dx-23").textContent = "High score: " + highScores["2.3"];
-  showOverlay("distraction");
+function setupUnifiedModeUI() {
+  const cards = document.querySelectorAll(".mode-card");
+  const distractionToggle = $("distraction-toggle");
+  const blitzDiffRow = $("blitz-diff-row");
+  const pillBtns = document.querySelectorAll(".pill-btn");
+
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      cards.forEach(c => c.classList.remove("active"));
+      card.classList.add("active");
+      
+      const mode = card.dataset.mode;
+      if (mode === "blitz") {
+        blitzDiffRow.style.display = "flex";
+      } else {
+        blitzDiffRow.style.display = "none";
+      }
+    });
+  });
+
+  if (distractionToggle) {
+    distractionToggle.addEventListener("change", () => {
+      updateModesHighScores();
+    });
+  }
+
+  pillBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      pillBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
 }
 
-export function openDifficultyMenu(blitzMode) {
-  game.pendingBlitzMode = blitzMode;
-  game.state = "difficulty";
-  $("difficulty-mode-label").textContent = blitzMode === "1.2"
-    ? "BLITZ"
-    : "DISTRACTION BLITZ";
-  $("hs-d-medium").textContent = "High score: " + highScores[blitzMode + "-medium"];
-  $("hs-d-hard").textContent = "High score: " + highScores[blitzMode + "-hard"];
-  showOverlay("difficulty");
-}
+setupUnifiedModeUI();

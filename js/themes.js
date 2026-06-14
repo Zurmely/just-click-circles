@@ -27,8 +27,9 @@ export const THEMES = {
     swatch: ["#facc15", "#9ca3af", "#ffffff"],
 
     // Typography
-    font: SYS_FONT,
-    fontUrl: null,
+    font: "'Inter', sans-serif",
+    fontDisplay: "'Outfit', sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;900&display=swap",
 
     // Shapes
     panelRadius: "20px",
@@ -374,6 +375,7 @@ export function applyCSSProperties(theme) {
   s.setProperty("--text", theme.textColor);
   s.setProperty("--text-dim", theme.textDim);
   s.setProperty("--font-primary", theme.font);
+  s.setProperty("--font-display", theme.fontDisplay || theme.font);
   s.setProperty("--panel-radius", theme.panelRadius);
   s.setProperty("--btn-radius", theme.btnRadius);
   s.setProperty("--panel-shadow", theme.panelShadow);

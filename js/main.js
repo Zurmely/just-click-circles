@@ -23,7 +23,7 @@ import { bindInput } from "./input.js";
 import {
   hud, showOverlay, updateHUD, updateBuffsHUD, updateAdAndCopyright,
   rollSplash, rollGameoverQuote, purchaseRemoveAds,
-  showModesMenu, openDistractionMenu, openDifficultyMenu,
+  showModesMenu,
 } from "./ui.js";
 import { bindSettings } from "./settings.js";
 
@@ -53,17 +53,51 @@ window.addEventListener("resize", resize);
 window.addEventListener("orientationchange", () => setTimeout(resize, 200));
 
 // ---------- Fullscreen ----------
-function enterFullscreen() {
-  const el = document.documentElement;
-  const alreadyFs = document.fullscreenElement || document.webkitFullscreenElement;
-  const req = el.requestFullscreen || el.webkitRequestFullscreen;
-  if (req && !alreadyFs) {
-    try {
-      const p = req.call(el);
-      if (p && p.catch) p.catch(() => {});
-    } catch (e) { /* fullscreen unavailable */ }
+function toggleFullscreen() {
+  const doc = window.document;
+  const docEl = doc.documentElement;
+  const isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+  
+  if (!isFs) {
+    const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+    if (req) {
+      try {
+        const p = req.call(docEl);
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    }
+  } else {
+    const exit = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
+    if (exit) {
+      try {
+        exit.call(doc);
+      } catch (e) {}
+    }
   }
 }
+
+function updateFullscreenButtons() {
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+  const settingsBtn = $("settings-fullscreen-btn");
+  const floatBtn = $("float-fullscreen-btn");
+  
+  const label = isFs ? "Exit Fullscreen" : "Enter Fullscreen";
+  if (settingsBtn) {
+    settingsBtn.textContent = label;
+    settingsBtn.classList.toggle("active", isFs);
+  }
+  if (floatBtn) {
+    floatBtn.setAttribute("aria-label", label);
+    floatBtn.innerHTML = isFs 
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6m10-6h-6v6M4 10h6V4m10 6h-6V4"/></svg>`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>`;
+  }
+}
+
+document.addEventListener("fullscreenchange", updateFullscreenButtons);
+document.addEventListener("webkitfullscreenchange", updateFullscreenButtons);
+document.addEventListener("mozfullscreenchange", updateFullscreenButtons);
+document.addEventListener("MSFullscreenChange", updateFullscreenButtons);
 
 // loseLife is imported from state.js (where endGame callback is registered at init)
 
@@ -164,7 +198,6 @@ function loop(ts) {
 
 // ---------- Flow ----------
 function startGame(selectedMode) {
-  enterFullscreen();
   game.mode = selectedMode;
   game.score = 0;
   game.lives = maxLives();
@@ -268,23 +301,10 @@ function endGame() {
 }
 
 // ---------- Button wiring ----------
-$("play-btn").addEventListener("click", () => { enterFullscreen(); showModesMenu(); });
+$("play-btn").addEventListener("click", () => { showModesMenu(); });
 $("settings-btn").addEventListener("click", () => { game.state = "settings"; showOverlay("settings"); });
-$("cat-normal-btn").addEventListener("click", () => startGame("1"));
-$("cat-zen-btn").addEventListener("click", () => startGame("1.1"));
-$("cat-blitz-btn").addEventListener("click", () => openDifficultyMenu("1.2"));
-$("cat-mayhem-btn").addEventListener("click", () => startGame("1.3"));
-$("cat-distraction-btn").addEventListener("click", openDistractionMenu);
-$("dx-normal-btn").addEventListener("click", () => startGame("2"));
-$("dx-zen-btn").addEventListener("click", () => startGame("2.1"));
-$("dx-blitz-btn").addEventListener("click", () => openDifficultyMenu("2.2"));
-$("dx-mayhem-btn").addEventListener("click", () => startGame("2.3"));
-$("dx-back-btn").addEventListener("click", showModesMenu);
-$("diff-medium-btn").addEventListener("click", () => { game.blitzDifficulty = "medium"; startGame(game.pendingBlitzMode); });
-$("diff-hard-btn").addEventListener("click", () => { game.blitzDifficulty = "hard"; startGame(game.pendingBlitzMode); });
-$("difficulty-back-btn").addEventListener("click", () => {
-  if (game.pendingBlitzMode === "2.2") openDistractionMenu(); else showModesMenu();
-});
+$("float-fullscreen-btn").addEventListener("click", toggleFullscreen);
+$("settings-fullscreen-btn").addEventListener("click", toggleFullscreen);
 $("modes-back-btn").addEventListener("click", () => { game.state = "menu"; showOverlay("menu"); });
 $("settings-back-btn").addEventListener("click", () => { game.state = "menu"; showOverlay("menu"); });
 $("pause-btn").addEventListener("click", pauseGame);
@@ -292,8 +312,30 @@ $("resume-btn").addEventListener("click", resumeGame);
 $("exit-btn").addEventListener("click", showResults);
 $("retry-btn").addEventListener("click", () => startGame(game.mode));
 $("gameover-exit-btn").addEventListener("click", showResults);
+$("results-retry-btn").addEventListener("click", () => startGame(game.mode));
+$("results-modes-btn").addEventListener("click", showModesMenu);
 $("results-menu-btn").addEventListener("click", exitToMenu);
 $("remove-ads-btn").addEventListener("click", purchaseRemoveAds);
+
+// Unified Start Button wiring
+$("start-game-btn").addEventListener("click", () => {
+  const activeCard = document.querySelector(".mode-card.active");
+  if (!activeCard) return;
+  const base = activeCard.dataset.mode;
+  const distraction = $("distraction-toggle").checked;
+  
+  let modeId = distraction ? "2" : "1";
+  if (base === "zen") modeId += ".1";
+  else if (base === "blitz") modeId += ".2";
+  else if (base === "mayhem") modeId += ".3";
+  
+  if (base === "blitz") {
+    const activeDiff = document.querySelector(".pill-btn.active");
+    game.blitzDifficulty = activeDiff ? activeDiff.dataset.diff : "hard";
+  }
+  
+  startGame(modeId);
+});
 
 // Auto-pause on tab switch
 document.addEventListener("visibilitychange", () => {
@@ -304,11 +346,7 @@ document.addEventListener("visibilitychange", () => {
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
   switch (game.state) {
-    case "modes":       game.state = "menu"; showOverlay("menu"); break;
-    case "distraction": showModesMenu(); break;
-    case "difficulty":
-      if (game.pendingBlitzMode === "2.2") openDistractionMenu(); else showModesMenu();
-      break;
+    case "modes":      game.state = "menu"; showOverlay("menu"); break;
     case "settings":   game.state = "menu"; showOverlay("menu"); break;
     case "paused":     resumeGame(); break;
     case "results":    exitToMenu(); break;

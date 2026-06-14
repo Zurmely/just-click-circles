@@ -24,6 +24,11 @@
   </button>
 </div>
 
+<!-- Floating Fullscreen Toggle -->
+<button id="float-fullscreen-btn" class="float-btn" aria-label="Toggle Fullscreen">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+</button>
+
 <!-- Main menu -->
 <div class="overlay visible" id="menu-main">
   <div class="panel">
@@ -36,39 +41,73 @@
   </div>
 </div>
 
-<!-- Mode select -->
+<!-- Mode select (Unified) -->
 <div class="overlay" id="menu-modes">
-  <div class="panel">
+  <div class="panel panel-large">
     <h2>Select Mode</h2>
-    <button class="btn btn-primary" id="cat-normal-btn">Normal<small class="hs" id="hs-m-1">High score: 0</small></button>
-    <button class="btn btn-primary" id="cat-zen-btn">Zen<small class="hs" id="hs-m-11">High score: 0</small></button>
-    <button class="btn btn-primary" id="cat-blitz-btn">Blitz<small class="hs" id="hs-m-12">Best: M 0 &middot; H 0</small></button>
-    <button class="btn btn-primary" id="cat-mayhem-btn">Mayhem<small class="hs" id="hs-m-13">High score: 0</small></button>
-    <button class="btn btn-primary" id="cat-distraction-btn">Distraction</button>
+    
+    <div class="modes-grid">
+      <!-- Normal Card -->
+      <div class="mode-card active" data-mode="normal" id="card-normal">
+        <div class="mode-icon">🎯</div>
+        <div class="mode-title">Normal</div>
+        <div class="mode-desc">Classic reflex test. 3 lives.</div>
+        <div class="mode-hs" id="hs-m-normal">High score: 0</div>
+      </div>
+      
+      <!-- Zen Card -->
+      <div class="mode-card" data-mode="zen" id="card-zen">
+        <div class="mode-icon">🌸</div>
+        <div class="mode-title">Zen</div>
+        <div class="mode-desc">No lives, no limits. Just click.</div>
+        <div class="mode-hs" id="hs-m-zen">High score: 0</div>
+      </div>
+      
+      <!-- Blitz Card -->
+      <div class="mode-card" data-mode="blitz" id="card-blitz">
+        <div class="mode-icon">⚡</div>
+        <div class="mode-title">Blitz</div>
+        <div class="mode-desc">15s rush. Speed is everything.</div>
+        <div class="mode-hs" id="hs-m-blitz">Best: M 0 &middot; H 0</div>
+      </div>
+      
+      <!-- Mayhem Card -->
+      <div class="mode-card" data-mode="mayhem" id="card-mayhem">
+        <div class="mode-icon">💥</div>
+        <div class="mode-title">Mayhem</div>
+        <div class="mode-desc">Power-ups, explosions & chaos.</div>
+        <div class="mode-hs" id="hs-m-mayhem">High score: 0</div>
+      </div>
+    </div>
+
+    <!-- Modifier Section -->
+    <div class="modes-modifiers">
+      <div class="modifier-row">
+        <div class="modifier-info">
+          <span class="modifier-name">Distraction Mode</span>
+          <span class="modifier-desc">Spawns decoy shapes to trick your focus. Touching them costs a life.</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="distraction-toggle">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Blitz difficulty, visible only when blitz card is selected -->
+      <div class="modifier-row" id="blitz-diff-row" style="display: none;">
+        <div class="modifier-info">
+          <span class="modifier-name">Blitz Difficulty</span>
+          <span class="modifier-desc">Choose between Medium speed or Hard cursor-relative spawns.</span>
+        </div>
+        <div class="pill-selector">
+          <button class="pill-btn active" data-diff="medium" id="pill-diff-medium">Medium</button>
+          <button class="pill-btn" data-diff="hard" id="pill-diff-hard">Hard</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="start-game-btn" style="margin-top: 15px;">Start Game</button>
     <button class="btn btn-ghost" id="modes-back-btn">Back</button>
-  </div>
-</div>
-
-<!-- Distraction variations -->
-<div class="overlay" id="menu-distraction">
-  <div class="panel">
-    <h2>Distraction</h2>
-    <button class="btn btn-primary" id="dx-normal-btn">Normal<small class="hs" id="hs-dx-2">High score: 0</small></button>
-    <button class="btn btn-primary" id="dx-zen-btn">Zen<small class="hs" id="hs-dx-21">High score: 0</small></button>
-    <button class="btn btn-primary" id="dx-blitz-btn">Blitz<small class="hs" id="hs-dx-22">Best: M 0 &middot; H 0</small></button>
-    <button class="btn btn-primary" id="dx-mayhem-btn">Mayhem<small class="hs" id="hs-dx-23">High score: 0</small></button>
-    <button class="btn btn-ghost" id="dx-back-btn">Back</button>
-  </div>
-</div>
-
-<!-- Blitz difficulty select -->
-<div class="overlay" id="menu-difficulty">
-  <div class="panel">
-    <h2>Select Difficulty</h2>
-    <div class="subtitle" id="difficulty-mode-label">BLITZ</div>
-    <button class="btn btn-primary" id="diff-medium-btn">Medium<small class="hs" id="hs-d-medium">High score: 0</small></button>
-    <button class="btn btn-primary" id="diff-hard-btn">Hard<small class="hs" id="hs-d-hard">High score: 0</small></button>
-    <button class="btn btn-ghost" id="difficulty-back-btn">Back</button>
   </div>
 </div>
 
@@ -77,6 +116,10 @@
   <div class="panel">
     <h2>Settings</h2>
     <button class="btn" id="remove-ads-btn">Remove ads &mdash; $0.99</button>
+    <div class="setting-row">
+      <label>Fullscreen</label>
+      <button class="file-btn" id="settings-fullscreen-btn">Enter Fullscreen</button>
+    </div>
     <div class="setting-row setting-row-themes">
       <label>Theme</label>
       <div class="theme-selector" id="theme-selector">
@@ -161,7 +204,9 @@
       <span>Circles missed</span>
       <span class="stat-value stat-miss" id="stat-missed">0</span>
     </div>
-    <button class="btn btn-primary" id="results-menu-btn">Main Menu</button>
+    <button class="btn btn-primary" id="results-retry-btn">Play Again</button>
+    <button class="btn btn-secondary" id="results-modes-btn">Choose Mode</button>
+    <button class="btn btn-ghost" id="results-menu-btn">Main Menu</button>
   </div>
 </div>
 
