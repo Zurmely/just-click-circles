@@ -107,8 +107,8 @@ export const THEMES = {
     isDark: false,
     swatch: ["#da7b4a", "#d4a574", "#faf5ee"],
 
-    font: SYS_FONT,
-    fontUrl: null,
+    font: "'JetBrains Mono', monospace",
+    fontUrl: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap",
 
     panelRadius: "24px",
     btnRadius: "16px",
@@ -172,8 +172,8 @@ export const THEMES = {
     isDark: true,
     swatch: ["#ffd700", "#e03030", "#4a90d9"],
 
-    font: "'Fredoka', 'Segoe UI', Roboto, sans-serif",
-    fontUrl: "https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap",
+    font: "'Press Start 2P', monospace",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap",
 
     panelRadius: "16px",
     btnRadius: "12px",
@@ -236,8 +236,8 @@ export const THEMES = {
     isDark: true,
     swatch: ["#a335ee", "#1eff00", "#0d1117"],
 
-    font: "'Cinzel', 'Georgia', 'Times New Roman', serif",
-    fontUrl: "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&display=swap",
+    font: "'Metamorphous', serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Metamorphous&display=swap",
 
     panelRadius: "8px",
     btnRadius: "6px",
